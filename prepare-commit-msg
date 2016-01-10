@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Jacob Young
+# MIT License
+#
+# This script will append a list of added/removed features to a commit message.
+# It reads comments following a '@commit' symbol and constructs an unordered list of them.
+# After comments are read, they are removed from the file they are found
+#
+# Example:
+# //@commit: Added new link parsing function
+#
+# Output (in commit message):
+# - Added new link parsing funciton
+
+# Add file names or file types to be ignored
+# Example: ( ".sh" "README.md" "config.yml" ) 
+IGNORED=( "README.md" "parse.sh" "post-commit" )
+
+which -s pcregrep 
+if [ $? -eq 0 ]; then
+  # Assuming Mac OS X (pcregrep available)
+  grep_search="pcregrep -o2 '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
+else
+  grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
+fi
+
+GITLS=$(git ls-files)
+ADDED_FILES=( ${GITLS//$'\n'/ } )
+
+for i in ${!ADDED_FILES[@]}; do
+  file_path=${ADDED_FILES["$i"]}
+  filename=$( basename "$file_path" )
+  extension="${filename##*.}"
+  if [[ "${IGNORED[*]}" =~ "${filename}" || "${IGNORED[*]}" =~ "${extension}" ]]; then
+    # File should not be read - remove
+    unset ADDED_FILES["$i"]
+  fi
+done
+
+comments=""
+for fn in "${ADDED_FILES[@]}"; do
+  temp=$( cat "$fn" | eval "$grep_search" | tr -s '[:space:]' )
+  if [[ "$temp" != ""  ]]; then
+    comments+="$temp"
+    comments+="\n"
+  fi
+done
+comments=$(echo -en "$comments" | sed -e 's/^/- /')
+grep -qs "^$comments" "$1"
+if [ $? -eq  1 ]; then
+  if [[ "$comments" == "" ]]; then
+    exit 0
+  else
+    # Prepend to commit file
+    echo -e "\n\n$comments" | cat - "$1" > temp_cmmt_msg && mv temp_cmmt_msg "$1"
+  fi
+fi
+

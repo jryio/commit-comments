@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Remove @commit comments from source files
+
+# == Add file names to ignore
+IGNORED=( "README.md" "parse.sh" "post-commit" )
+
+GITLS=$(git ls-files)
+ADDED_FILES=( ${GITLS//$'\n'/ } )
+
+for i in ${!ADDED_FILES[@]}; do
+  file_path=${ADDED_FILES["$i"]}
+  filename=$( basename "$file_path" )
+  if [[ "${IGNORED[*]}" =~ "${filename}" ]]; then
+    # File should not be read - remove
+    unset ADDED_FILES["$i"]
+  fi
+done
+
+for fn in "${ADDED_FILES[@]}"; do
+  # Uncomment sed command to remove '// @commit' comments in all files
+  sed -ri 's/(([#;*]|\/{1,2})?(\s+)?@commit([-:.\s]+)?)([^\r\n*\/]+)//' "$fn" # GNU sed compatible only 
+  # Uncomment sed command to replace multiple empty lines with a single empty line
+  # sed '/^$/N;/^\n$/D' "$fn" # GNU sed compatible only
+done
