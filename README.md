@@ -68,7 +68,7 @@ function helloWorld(phrase) {
 
 Search functionality is implemented using pcregrep which is portable to many Linux distributions and OS X. If pcregrep is not available on the system, GNU grep is a backup (not required to use the hooks).
 
-GNU grep is used for the `-P` Perl Regular Expression flag and the `\K` variable loopback symbol.
+GNU grep is used for the `-P` Perl Regular Expression flag and the `\K` variable lookback symbol.
 
 
 ### Contributing & Todo
