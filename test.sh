@@ -13,33 +13,36 @@
 # Output (in commit message):
 # - Added new link parsing funciton
 
-# ADD FILES TO SEARCH
-# Example: 
-EXTENSIONS=( ".cpp" ".html" ".css" ".js" )
+IGNORED=( ".ccignore" )
 
-which -s pcregrep 
-if [ $? -eq 0 ]; then
-  # Assuming Mac OS X (pcregrep available)
+# If the script is deployed to the .git directory,
+# move to the repository directory so .ccignore file
+# can be found
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if echo "$DIR" | grep -qs 'git'; then
+  cd "$( echo "$DIR" | grep -Po '^.*(?=(\.git))' )" 
+fi
+
+if [ -f ".ccignore" ]; then
+ while IFS='' read -r line || [[ -n "$line" ]]; do
+   IGNORED+=( "$line" )
+  done < ".ccignore"
+fi
+
+if which pcregrep > /dev/null; then
   grep_search="pcregrep -o2 '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
 else
   grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
 fi
 
-GITLS=$(git ls-files)
-# String Replace: newline with space (to match default IFS variable)
-# Then construct an array with the new string (space separated)
-ADDED_FILES=( ${GITLS//$'\n'/ } )
-
+IFS=$'\n' ADDED_FILES=( $(git ls-files) )
 for i in ${!ADDED_FILES[@]}; do
   
   file_path=${ADDED_FILES["$i"]}
   filename=$( basename "$file_path" )
   extension="${filename##*.}"
-  if [[ "${EXTENSIONS[*]}" =~ "${extension}" ]]; then
-    # File type is matched
-    continue
-  else
-    # File should not be read - remove
+  # File should be removed if filename or extension type has been specified in .ccignore
+  if [[ "${IGNORED[*]}" =~ "${filename}" || "${IGNORED[*]}" =~ "${extension}" ]]; then
     unset ADDED_FILES["$i"]
   fi
 done

@@ -13,9 +13,21 @@
 # Output (in commit message):
 # - Added new link parsing funciton
 
-# Add file names or file types to be ignored
-# Example: ( ".sh" "README.md" "config.yml" ) 
-IGNORED=( "README.md" "parse.sh" "post-commit" )
+IGNORED=( ".ccignore" )
+
+# If the script is deployed to the .git directory,
+# move to the repository directory so .ccignore file
+# can be found
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if echo "$DIR" | grep -qs 'git'; then
+  cd "$( echo "$DIR" | grep -Po '^.*(?=(\.git))' )" 
+fi
+
+if [ -f ".ccignore" ]; then
+ while IFS='' read -r line || [[ -n "$line" ]]; do
+   IGNORED+=( "$line" )
+  done < ".ccignore"
+fi
 
 which -s pcregrep 
 if [ $? -eq 0 ]; then
@@ -25,9 +37,7 @@ else
   grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
 fi
 
-GITLS=$(git ls-files)
-ADDED_FILES=( ${GITLS//$'\n'/ } )
-
+IFS=$'\n' ADDED_FILES=( $(git ls-files) )
 for i in ${!ADDED_FILES[@]}; do
   file_path=${ADDED_FILES["$i"]}
   filename=$( basename "$file_path" )

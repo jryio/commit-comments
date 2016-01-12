@@ -79,10 +79,10 @@ Preferred Contributions would be to improve readability and complexity of the Gi
 - Create more robust regular expression for validating comment syntax
 	- [ ] Check for multiline block comments
 	- [ ] Check for closing comment symbols (positive look aheads)
-- [ ] Rewrite sed commands to be POSIX (BSD) compatible regular expressions
 - Programming Languages
 	- [ ] HTML
 	- [ ] Fortran
 	- [ ] AppleScript
 - [ ] Develop more test cases (finding edge cases with grep expression)
+- [ ] Rewrite sed commands to be POSIX (BSD) compatible regular expressions
 
