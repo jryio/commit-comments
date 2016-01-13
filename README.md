@@ -14,10 +14,10 @@ your files
 Clone the repository and move the `prepare-commit-msg` and `post-commit` files.
 
 ```
-git clone https://github.com/thebearjew/commit-comments.git
-cd commit-comments
-chmod a+x prepare-commit-msg post-commit
-cp prepare-commit-msg post-commit your-repository/.git/hooks 
+$ git clone https://github.com/thebearjew/commit-comments.git
+$ cd commit-comments
+$ chmod a+x prepare-commit-msg post-commit
+$ cp prepare-commit-msg post-commit your-repository/.git/hooks 
 ```
 
 ### Usage
@@ -80,7 +80,11 @@ build.sh
 
 On Mac OS X, the default sed is from the FreeBSD distribution. To download the GNU sed version, use [Brew](http://brew.sh)
 
-`brew install gnu-sed --with-default-names` will replace the existing sed command with the GNU version. Without the `--with-default-names` option, the command will be downloaded as `gsed`.
+```
+$ brew install gnu-sed --with-default-names
+```
+
+will replace the existing sed command with the GNU version. Without the `--with-default-names` option, the command will be downloaded as `gsed`.
 
 Search functionality is implemented using **pcregrep** which is portable to many Linux distributions and OS X. If pcregrep is not available on the system, GNU grep is a backup (not required to use the hooks).
 
