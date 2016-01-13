@@ -1,5 +1,8 @@
 #!/bin/bash
 #
+# Copyright (c) 2016 Jacob Young
+# MIT License
+#
 # Remove @commit comments from source files
 
 IGNORED=( ".ccignore" )
