@@ -29,9 +29,7 @@ if [ -f ".ccignore" ]; then
   done < ".ccignore"
 fi
 
-which -s pcregrep 
-if [ $? -eq 0 ]; then
-  # Assuming Mac OS X (pcregrep available)
+if which pcregrep > /dev/null; then
   grep_search="pcregrep -o2 '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
 else
   grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
