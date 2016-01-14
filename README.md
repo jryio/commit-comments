@@ -75,7 +75,7 @@ build.sh
 .cpp
 ```
 
-### Compatibility & Required Commands
+### Dependencies
 **GNU sed is required to remove @commit comments in post-commit** 
 
 On Mac OS X, the default sed is from the FreeBSD distribution. To download the GNU sed version, use [Brew](http://brew.sh)
