@@ -96,6 +96,8 @@ Contributions to improve simplicity/resolve compatibility would be preferred. If
 
 **TODO**
 
+- [ ] Add filename and line number to bulleted commit commets - [suggestion by
+  joncalhoun](https://news.ycombinator.com/item?id=10904142) on HN 
 - Create more robust regular expression for validating comment syntax
 	- [ ] Check for multiline block comments
 	- [ ] Check for closing comment symbols (positive look aheads)
