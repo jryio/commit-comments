@@ -39,4 +39,4 @@ for fn in "${ADDED_FILES[@]}"; do
   # sed '/^$/N;/^\n$/D' "$fn" # GNU sed compatible only
 done
 
-git add "${ADDED_FILES[@]}" && git commit --amend --reuse-message
+git add "${ADDED_FILES[@]}" && git commit --amend --reuse-message="HEAD"
