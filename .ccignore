@@ -1,5 +1,7 @@
 README.md
-prepapre-commit-msg
+prepare-commit-msg
 post-commit
-.sh
+test.sh
+test-files/basic.cpp
+testfiles/thing.js
 LICENSE
