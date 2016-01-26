@@ -11,8 +11,15 @@ IGNORED=( ".ccignore" )
 # move to the repository directory so .ccignore file
 # can be found
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if which pcregrep > /dev/null; then
+  grep_git="pcregrep -o '^.*(?=(\.git))'"
+else
+  grep_git="grep -Po '^.*(?=(\.git))'"
+fi
+
 if echo "$DIR" | grep -qs 'git'; then
-  cd "$( echo "$DIR" | pcregrep -o '^.*(?=(\.git))' )" 
+  cd "$( echo "$DIR" | eval "$grep_git" )" 
 fi
 
 if [ -f ".ccignore" ]; then
