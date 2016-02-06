@@ -13,6 +13,9 @@
 # Output (in commit message):
 # - Added new link parsing funciton
 
+# Arg 1: SHOW_LINES (T/F)
+SHOW_LINES=true
+
 IGNORED=( ".ccignore" )
 
 # If the script is deployed to the .git directory,
@@ -31,8 +34,10 @@ fi
 
 if which pcregrep > /dev/null; then
   grep_search="pcregrep -o2 '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
+  N_grep_search="pcregrep -o2 -n '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
 else
   grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
+  N_grep_search="grep -Po -n '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
 fi
 
 IFS=$'\n' ADDED_FILES=( $(git ls-files) )
@@ -48,13 +53,19 @@ done
 
 comments=""
 for fn in "${ADDED_FILES[@]}"; do
-  temp=$( cat "$fn" | eval "$grep_search" | tr -s '[:space:]' )
+  if [ "$SHOW_LINES" = true ]; then
+    temp=$(cat "$fn" | eval "$N_grep_search" | tr -s '[:space:]' | sed 's/[[:blank:]]*$//' | awk -v fname=$fn -F':' '{ $1 ="[" fname "#" $1 "]"; print}')
+  else
+    temp=$( cat "$fn" | eval "$grep_search" | tr -s '[:space:]' | sed 's/[[:blank:]]*$//' )
+  fi
   if [[ "$temp" != ""  ]]; then
     comments+="$temp"
     comments+="\n"
   fi
 done
+
 comments=$(echo -en "$comments" | sed -e 's/^/- /')
+
 grep -qs "^$comments" "$1"
 if [ $? -eq  1 ]; then
   if [[ "$comments" == "" ]]; then
