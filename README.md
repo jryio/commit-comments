@@ -107,6 +107,8 @@ Contributions to improve simplicity/resolve compatibility would be preferred. If
 	- [ ] AppleScript
 - [ ] Develop more test cases (finding edge cases with grep expression)
 - [ ] Rewrite sed commands to be POSIX (BSD) compatible regular expressions
+- [ ] Use `git diff --cached --name-status --diff-filter=ACM` in place of `git
+  ls-files`
 
 --
 
