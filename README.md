@@ -2,7 +2,7 @@
 
 Commit Comments automatically create a bulleted list of changes from comments in your code. Write comments using `@commit` keyword, and they will be added to your commit message when it's time to commit.
 
-It works by using two [Git hooks](https://www.kernel.org/pub/software/scm/git/docs/githooks.html) (**prepare-commit-msg** and **post-commit**) to
+It works by using two [Git hooks](https://www.kernel.org/pub/software/scm/git/docs/githooks.html) (**prepare-commit-m   sg** and **post-commit**) to
 search your repository for @commit comments and construct a clean list of
 changes. 
 
@@ -76,19 +76,21 @@ build.sh
 ```
 
 ### Dependencies
-**GNU sed is required to remove @commit comments in post-commit** 
+1. **GNU sed** is required to remove @commit comments in post-commit. 
 
-On Mac OS X, the default sed is from the FreeBSD distribution. To download the GNU sed version, use [Brew](http://brew.sh)
+  On Mac OS X, the default sed is from the FreeBSD distribution. To download the GNU sed version, use [Brew](http://brew.sh)
 
-```
-$ brew install gnu-sed --with-default-names
-```
+  ```
+  $ brew install gnu-sed --with-default-names
+  ```
 
-will replace the existing sed command with the GNU version. Without the `--with-default-names` option, the command will be downloaded as `gsed`.
+  Without the `--with-default-names` option, the command will be downloaded as `gsed`.
 
-Search functionality is implemented using **pcregrep** which is portable to many Linux distributions and OS X. If pcregrep is not available on the system, GNU grep is a backup (not required to use the hooks).
+2. **pcregrep** is the primary search utility due to its widespread
+  portability. 
 
-GNU grep is used for the `-P` Perl Regular Expression flag and the `\K` variable lookback symbol.
+  If pcregrep is not available, GNU grep is used (for Perl RegEx & variable
+  lookback). 
 
 
 ### Contributing & Todo
@@ -98,6 +100,10 @@ Contributions to improve simplicity/resolve compatibility would be preferred. If
 
 - [ ] Add filename and line number to bulleted commit commets - [suggestion by
   joncalhoun](https://news.ycombinator.com/item?id=10904142) on HN 
+- [ ] Use `git diff --cached --name-status --diff-filter=ACM` in place of `git
+  ls-files`
+- [ ] Develop more test cases (finding edge cases with grep expression)
+- [ ] Rewrite sed commands to be POSIX (BSD) compatible regular expressions
 - Create more robust regular expression for validating comment syntax
 	- [ ] Check for multiline block comments
 	- [ ] Check for closing comment symbols (positive look aheads)
@@ -105,10 +111,6 @@ Contributions to improve simplicity/resolve compatibility would be preferred. If
 	- [ ] HTML
 	- [ ] Fortran
 	- [ ] AppleScript
-- [ ] Develop more test cases (finding edge cases with grep expression)
-- [ ] Rewrite sed commands to be POSIX (BSD) compatible regular expressions
-- [ ] Use `git diff --cached --name-status --diff-filter=ACM` in place of `git
-  ls-files`
 
 --
 
