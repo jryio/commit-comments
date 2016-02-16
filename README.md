@@ -46,8 +46,8 @@ Output in Git commit message
 ```
 # Commit title goes here
 
-- Added a parameter to helloWorld function
-- Concatenated strings
+- [foo.js#1] Added a parameter to helloWorld function
+- [foo.js#3] Concatenated strings
 # Changes to be committed:
 #	modified:   foo.js 
 #
@@ -98,7 +98,7 @@ Contributions to improve simplicity/resolve compatibility would be preferred. If
 
 **TODO**
 
-- [ ] Add filename and line number to bulleted commit commets - [suggestion by
+- [x] Add filename and line number to bulleted commit commets - [suggestion by
   joncalhoun](https://news.ycombinator.com/item?id=10904142) on HN 
 - [ ] Use `git diff --cached --name-status --diff-filter=ACM` in place of `git
   ls-files`

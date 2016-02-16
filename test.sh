@@ -13,6 +13,9 @@
 # Output (in commit message):
 # - Added new link parsing funciton
 
+# Arg 1: SHOW_LINES (T/F)
+SHOW_LINES=$1
+
 IGNORED=( ".ccignore" )
 
 # If the script is deployed to the .git directory,
@@ -23,16 +26,12 @@ if echo "$DIR" | grep -qs 'git'; then
   cd "$( echo "$DIR" | grep -Po '^.*(?=(\.git))' )" 
 fi
 
-if [ -f ".ccignore" ]; then
- while IFS='' read -r line || [[ -n "$line" ]]; do
-   IGNORED+=( "$line" )
-  done < ".ccignore"
-fi
-
 if which pcregrep > /dev/null; then
   grep_search="pcregrep -o2 '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
+  N_grep_search="pcregrep -o2 -n '((?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?)([^\r\n*\/]+)'"
 else
   grep_search="grep -Po '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
+  N_grep_search="grep -Po -n '(?:[#;*]|(?:\/{2}))(?:\s+)?@commit(?:[-:.\s]+)?\K([^\r\n*\/]+)'"
 fi
 
 IFS=$'\n' ADDED_FILES=( $(git ls-files) )
@@ -49,15 +48,15 @@ done
 
 comments=""
 for fn in "${ADDED_FILES[@]}"; do
-  temp=$( cat "$fn" | eval "$grep_search" | tr -s '[:space:]' )
+  if [ "$SHOW_LINES" = true ]; then
+    temp=$(cat "$fn" | eval "$N_grep_search" | tr -s '[:space:]' | sed 's/[[:blank:]]*$//' | awk -v fname=$fn -F':' '{ $1 ="[" fname "#" $1 "]"; print}')
+  else
+    temp=$( cat "$fn" | eval "$grep_search" | tr -s '[:space:]' | sed 's/[[:blank:]]*$//' )
+  fi
   if [[ "$temp" != ""  ]]; then
     comments+="$temp"
     comments+="\n"
   fi
-  # Uncomment sed command to remove '// @commit' comments in all files
-  # sed -ri 's/(([#;*]|\/{1,2})?(\s+)?@commit([-:.\s]+)?)([^\r\n*\/]+)//' "$fn" # GNU sed compatible only 
-  # Uncomment sed command to replace multiple empty lines with a single empty line
-  # sed '/^$/N;/^\n$/D' "$fn" # GNU sed compatible only
 done
 comments=$(echo -en "$comments" | sed -e 's/^/- /')
 echo -n "$comments"
