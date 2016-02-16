@@ -46,8 +46,8 @@ Output in Git commit message
 ```
 # Commit title goes here
 
-- Added a parameter to helloWorld function
-- Concatenated strings
+- [foo.js#1] Added a parameter to helloWorld function
+- [foo.js#3] Concatenated strings
 # Changes to be committed:
 #	modified:   foo.js 
 #
